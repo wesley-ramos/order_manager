@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.smartconsulting.ordermanager</groupId>
-	<artifactId>ordermanager</artifactId>
+	<artifactId>order_manager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>order_manager</name>
 	<description>API to manage orders</description>
