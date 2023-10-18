@@ -39,7 +39,7 @@ jobs:
 
       - name: Generating project image
         run: |
-         docker login docker.pkg.github.com --username wesley-ramos --password ${{ secrets.GITHUB_TOKEN }}
-         docker build -t docker.pkg.github.com/wesley-ramos/order-manager/main:latest .
-         docker push docker.pkg.github.com/wesley-ramos/order-manager/main:latest
+         docker login https://ghcr.io --username wesley-ramos --password ${{ secrets.GITHUB_TOKEN }}
+         docker build -t https://ghcr.io/wesley-ramos/order-manager/main:latest .
+         docker push https://ghcr.io/wesley-ramos/order-manager/main:latest
 
