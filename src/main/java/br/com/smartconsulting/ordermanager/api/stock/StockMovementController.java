@@ -2,6 +2,8 @@ package br.com.smartconsulting.ordermanager.api.stock;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,13 +35,13 @@ public class StockMovementController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public void create(@RequestBody  StockMovementWritingDTO dto) {
+	public void create(@Valid @RequestBody  StockMovementWritingDTO dto) {
 		service.save(mapper.toEntity(dto));
 	}
 
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void update(@PathVariable("id") Long id, @RequestBody  StockMovementWritingDTO dto) {
+	public void update(@PathVariable("id") Long id, @Valid @RequestBody  StockMovementWritingDTO dto) {
 		service.save(mapper.toEntity(id, dto));
 	}
 
