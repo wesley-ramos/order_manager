@@ -13,7 +13,7 @@ public interface UserService {
     public List<UserEntity> findAll();
     
     @Transactional
-    public void save(UserEntity model);
+    public void save(UserEntity user);
     
     @Transactional
     public void delete(Long id);
