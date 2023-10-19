@@ -1,8 +1,13 @@
 package br.com.smartconsulting.ordermanager.api;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,5 +30,17 @@ public class GlobalHandlerAdvice {
 	@ResponseBody
 	public ErrorMessage constraint(ConstraintViolationException exception) {
 		return new ErrorMessage(exception.getMessage());
+	}
+	
+	@ExceptionHandler(value = { MethodArgumentNotValidException.class })
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorMessage constraint(MethodArgumentNotValidException ex) {
+		 List<String> errors = ex.getBindingResult().getFieldErrors()
+            .stream()
+            .map(FieldError::getDefaultMessage)
+            .collect(Collectors.toList());
+		 
+		return new ErrorMessage(errors);
 	}
 }
