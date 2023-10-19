@@ -18,3 +18,14 @@ This project is a simplified version of an order manager, its purpose is to demo
 - Show current completion of each order;
 - Write a log file with: orders completed, stock movements, email sent and errors.
 - API should make by java 8 with Spring Boot + Spring JPA or Jave EE + Hibernate, PostgreSQL, GIT, log4j (or other);
+
+# How to execute the project?
+Just clone the repository and run docker compose in the project root.
+```shell
+docker-compose up -d
+```
+# What are the available endpoints?
+Just access the api documentation at the URL below.
+```shell
+http://localhost:8080/docs
+```
