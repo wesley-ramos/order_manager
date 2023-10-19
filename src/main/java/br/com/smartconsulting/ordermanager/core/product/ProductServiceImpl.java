@@ -34,7 +34,8 @@ public class ProductServiceImpl implements ProductService {
 	public void save(ProductEntity product) {
 		repository.save(product);
 	}
-
+	
+	//TODO Do not allow to delete when there is a stock movement or an order
 	@Override
 	public void delete(Long id) {
 		ProductEntity product = this.findById(id);

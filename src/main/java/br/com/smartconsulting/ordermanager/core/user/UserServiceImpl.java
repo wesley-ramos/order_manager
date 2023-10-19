@@ -34,7 +34,8 @@ public class UserServiceImpl implements UserService {
 	public void save(UserEntity user) {
 		repository.save(user);
 	}
-
+	
+	//TODO Do not allow to delete when there is an order
 	@Override
 	public void delete(Long id) {
 		UserEntity user = this.findById(id);
