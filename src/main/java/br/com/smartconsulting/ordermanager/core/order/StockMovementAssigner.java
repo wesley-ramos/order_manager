@@ -88,7 +88,7 @@ public class StockMovementAssigner {
 			orderRepository.save(order);
 			
 			if(order.isCompleted()) {
-				publisher.publishEvent(new OrderCompleted(this, order.getId()));
+				publisher.publishEvent(new OrderCompleted(this, order.getId(), order.getUser().getId()));
 			}
 		}
 	}
