@@ -5,12 +5,15 @@ import static java.lang.String.format;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import br.com.smartconsulting.ordermanager.core.common.exceptions.InvalidParameterException;
 import br.com.smartconsulting.ordermanager.core.common.exceptions.NotFoundException;
 import br.com.smartconsulting.ordermanager.core.order.entities.OrderEntity;
 import br.com.smartconsulting.ordermanager.core.order.entities.OrderStatus;
+import br.com.smartconsulting.ordermanager.core.order.events.OrderCompleted;
+import br.com.smartconsulting.ordermanager.core.order.events.OrderGeneratedEvent;
 import br.com.smartconsulting.ordermanager.core.product.ProductRepository;
 import br.com.smartconsulting.ordermanager.core.user.UserRepository;
 
@@ -19,12 +22,14 @@ public class OrderServiceImpl implements OrderService {
 	private UserRepository userRepository;
 	private ProductRepository productRepository;
 	private OrderRepository orderRepository;
+	private ApplicationEventPublisher publisher;
 	
 	@Autowired
-	public OrderServiceImpl(UserRepository userRepository, ProductRepository productRepository, OrderRepository orderRepository) {
+	public OrderServiceImpl(UserRepository userRepository, ProductRepository productRepository, OrderRepository orderRepository, ApplicationEventPublisher publisher) {
 		this.userRepository = userRepository;
 		this.productRepository = productRepository;
 		this.orderRepository = orderRepository;
+		this.publisher = publisher;
 	}
 	
 	@Override
@@ -58,6 +63,11 @@ public class OrderServiceImpl implements OrderService {
 		}
 		
 		orderRepository.save(order);
+		
+		if(order.getStatus().equals(OrderStatus.COMPLETED)) {
+			publisher.publishEvent(new OrderCompleted(this, order.getId()));
+		}
+		publisher.publishEvent(new OrderGeneratedEvent(this, order.getId()));
 	}
 
 	@Override

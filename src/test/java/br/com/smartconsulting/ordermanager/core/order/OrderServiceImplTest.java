@@ -2,6 +2,8 @@ package br.com.smartconsulting.ordermanager.core.order;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,6 +20,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import br.com.smartconsulting.ordermanager.core.common.exceptions.InvalidParameterException;
 import br.com.smartconsulting.ordermanager.core.common.exceptions.NotFoundException;
@@ -44,6 +47,9 @@ public class OrderServiceImplTest {
 	@Mock
 	private OrderRepository orderRepository;
 	
+	@Mock
+	private ApplicationEventPublisher publisher;
+	
 	@Captor
 	private ArgumentCaptor<OrderEntity> captor;
 	
@@ -52,7 +58,8 @@ public class OrderServiceImplTest {
 		this.service = new OrderServiceImpl(
 			userRepository, 
 			productRepository, 
-			orderRepository
+			orderRepository,
+			publisher
 		);
 	}
 	
@@ -136,6 +143,8 @@ public class OrderServiceImplTest {
 
 		verify(orderRepository).save(captor.capture());
 		
+		verify(publisher).publishEvent(any());
+		
 		assertEquals(captor.getValue().getStatus(), OrderStatus.PENDING);
 	}
 	
@@ -153,6 +162,7 @@ public class OrderServiceImplTest {
 		service.save(order);
 
 		verify(orderRepository).save(captor.capture());
+		verify(publisher, times(2)).publishEvent(any());
 		
 		assertEquals(captor.getValue().getStatus(), OrderStatus.COMPLETED);
 	}
