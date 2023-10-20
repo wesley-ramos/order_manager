@@ -42,7 +42,7 @@ public class OrderMapper {
 			entity.getProduct().getId(),
 			entity.getUser().getId(),
 			entity.getQuantity(),
-			entity.getStatus(),
+			entity.isCompleted(),
 			createdAt
 		);
 	}

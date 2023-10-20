@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 import br.com.smartconsulting.ordermanager.core.common.exceptions.InvalidParameterException;
 import br.com.smartconsulting.ordermanager.core.common.exceptions.NotFoundException;
 import br.com.smartconsulting.ordermanager.core.order.entities.OrderEntity;
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderStatus;
 import br.com.smartconsulting.ordermanager.core.order.events.OrderCompleted;
 import br.com.smartconsulting.ordermanager.core.order.events.OrderGeneratedEvent;
+import br.com.smartconsulting.ordermanager.core.order.repositories.OrderRepository;
 import br.com.smartconsulting.ordermanager.core.product.ProductRepository;
 import br.com.smartconsulting.ordermanager.core.user.UserRepository;
 
@@ -51,23 +51,13 @@ public class OrderServiceImpl implements OrderService {
 		productRepository.findById(order.getProduct().getId())
     		.orElseThrow(() -> new InvalidParameterException(format("Product %d was not found", order.getProduct().getId())));
 		
-		Long quantityMovimented = order.getStockMoviments()
-			.stream()
-			.map(moviment -> moviment.getQuantityUsed())
-			.reduce(0l, Long::sum);
-		
-		if (order.getQuantity().equals(quantityMovimented)) {
-			order.setStatus(OrderStatus.COMPLETED);
-		}else {
-			order.setStatus(OrderStatus.PENDING);
-		}
-		
 		orderRepository.save(order);
 		
-		if(order.getStatus().equals(OrderStatus.COMPLETED)) {
+		if(order.isCompleted()) {
 			publisher.publishEvent(new OrderCompleted(this, order.getId()));
 		}
-		publisher.publishEvent(new OrderGeneratedEvent(this, order.getId()));
+		
+		publisher.publishEvent(new OrderGeneratedEvent(this, order.getId()));	
 	}
 
 	@Override

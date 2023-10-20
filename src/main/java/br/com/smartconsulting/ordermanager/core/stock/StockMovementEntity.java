@@ -1,6 +1,7 @@
 package br.com.smartconsulting.ordermanager.core.stock;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -38,7 +39,15 @@ public class StockMovementEntity {
 	
 	@OneToMany
 	@JoinColumn(name = "stock_movement_id")
-	private Set<OrderStockMovementEntity> stockMoviments;
+	private Set<OrderStockMovementEntity> orders;
+	
+	private boolean available;
+	
+	public StockMovementEntity() {
+		this.orders = new HashSet<>();
+		this.available = true;
+		this.createdAt = new Date();
+	}
 	
 	public Long getId() {
 		return id;
@@ -72,11 +81,27 @@ public class StockMovementEntity {
 		this.createdAt = createdAt;
 	}
 
-	public Set<OrderStockMovementEntity> getStockMoviments() {
-		return stockMoviments;
+	public Set<OrderStockMovementEntity> getOrders() {
+		return orders;
 	}
 
-	public void setStockMoviments(Set<OrderStockMovementEntity> stockMoviments) {
-		this.stockMoviments = stockMoviments;
+	public void addOrder(OrderStockMovementEntity order) {
+		this.orders.add(order);
+		
+		Long totalAmountUsed = orders
+			.stream()
+			.map(moviment -> moviment.getQuantityUsed())
+			.reduce(0l, Long::sum);
+		
+		if (totalAmountUsed < quantity) {
+			available = true;
+			return;
+		}
+		
+		available = false;
+	}
+
+	public boolean isAvailable() {
+		return available;
 	}
 }

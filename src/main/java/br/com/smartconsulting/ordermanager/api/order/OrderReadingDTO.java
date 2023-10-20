@@ -2,22 +2,20 @@ package br.com.smartconsulting.ordermanager.api.order;
 
 import java.time.LocalDateTime;
 
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderStatus;
-
 public class OrderReadingDTO {
 	private Long id;
 	private Long productId;
 	private Long userId;
 	private Long quantity; 
-	private OrderStatus status;
+	private boolean completed;
 	private LocalDateTime createdAt;
 	
-	public OrderReadingDTO(Long id, Long productId, Long userId, Long quantity, OrderStatus status, LocalDateTime createdAt){
+	public OrderReadingDTO(Long id, Long productId, Long userId, Long quantity, boolean completed, LocalDateTime createdAt){
 		this.id = id;
 		this.productId = productId;
 		this.userId = userId;
 		this.quantity = quantity;
-		this.status = status;
+		this.completed = completed;
 		this.createdAt = createdAt;
 	}
 
@@ -37,8 +35,8 @@ public class OrderReadingDTO {
 		return quantity;
 	}
 
-	public OrderStatus getStatus() {
-		return status;
+	public boolean isCompleted() {
+		return completed;
 	}
 
 	public LocalDateTime getCreatedAt() {

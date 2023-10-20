@@ -6,8 +6,6 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,9 +36,7 @@ public class OrderEntity {
 	private UserEntity user;
 	
 	private Long quantity;
-	
-	@Enumerated(EnumType.STRING)
-	private OrderStatus status;
+	private boolean completed;
 	
 	@OneToMany
 	@JoinColumn(name = "order_id")
@@ -52,7 +48,7 @@ public class OrderEntity {
 	
 	public OrderEntity() {
 		this.stockMoviments = new HashSet<>();
-		this.status = OrderStatus.PENDING;
+		this.completed = false;
 		this.createdAt = new Date();
 	}
 	
@@ -88,20 +84,24 @@ public class OrderEntity {
 		this.quantity = quantity;
 	}
 
-	public OrderStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(OrderStatus status) {
-		this.status = status;
-	}
-
 	public Set<OrderStockMovementEntity> getStockMoviments() {
 		return stockMoviments;
 	}
 
-	public void setStockMoviments(Set<OrderStockMovementEntity> stockMoviments) {
-		this.stockMoviments = stockMoviments;
+	public void addMoviment(OrderStockMovementEntity stockMoviment) {
+		this.stockMoviments.add(stockMoviment);
+		
+		Long quantityMovimented = stockMoviments
+			.stream()
+			.map(moviment -> moviment.getQuantityUsed())
+			.reduce(0l, Long::sum);
+		
+		if(quantityMovimented == quantity) {
+			completed = true;
+			return;
+		}
+		
+		completed = false;
 	}
 
 	public Date getCreatedAt() {
@@ -110,5 +110,9 @@ public class OrderEntity {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+	
+	public boolean isCompleted() {
+		return completed;
 	}
 }

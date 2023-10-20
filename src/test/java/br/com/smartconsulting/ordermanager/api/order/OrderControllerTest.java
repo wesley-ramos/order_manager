@@ -81,13 +81,13 @@ public class OrderControllerTest {
 			.andExpect(MockMvcResultMatchers.jsonPath("$[0].productId").value(Matchers.equalTo(1)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$[0].userId").value(Matchers.equalTo(1)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$[0].quantity").value(Matchers.equalTo(5)))
-			.andExpect(MockMvcResultMatchers.jsonPath("$[0].status").value(Matchers.equalTo("COMPLETED")))
+			.andExpect(MockMvcResultMatchers.jsonPath("$[0].completed").value(Matchers.equalTo(false)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$[0].createdAt").value(Matchers.equalTo("2023-10-20T22:00:00")))
 			.andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(Matchers.equalTo(2)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$[1].productId").value(Matchers.equalTo(1)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$[1].userId").value(Matchers.equalTo(1)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$[1].quantity").value(Matchers.equalTo(8)))
-			.andExpect(MockMvcResultMatchers.jsonPath("$[1].status").value(Matchers.equalTo("PENDING")))
+			.andExpect(MockMvcResultMatchers.jsonPath("$[1].completed").value(Matchers.equalTo(false)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$[1].createdAt").value(Matchers.equalTo("2023-10-21T12:00:00")));
     }
     
@@ -102,7 +102,7 @@ public class OrderControllerTest {
 			.andExpect(MockMvcResultMatchers.jsonPath("$.productId").value(Matchers.equalTo(1)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(Matchers.equalTo(1)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$.quantity").value(Matchers.equalTo(5)))
-			.andExpect(MockMvcResultMatchers.jsonPath("$.status").value(Matchers.equalTo("COMPLETED")))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.completed").value(Matchers.equalTo(false)))
 			.andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").value(Matchers.equalTo("2023-10-20T22:00:00")));
     }
 }
