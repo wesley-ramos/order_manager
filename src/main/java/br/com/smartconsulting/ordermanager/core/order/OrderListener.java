@@ -12,10 +12,10 @@ import br.com.smartconsulting.ordermanager.core.stock.events.StockMovedEvent;
 @Component
 public class OrderListener {
 	private Logger logger = LoggerFactory.getLogger(OrderListener.class);
-	private OrderStockMovementAssigner assiger;
+	private StockMovementAssigner assiger;
 	
 	@Autowired
-	public OrderListener(OrderStockMovementAssigner assiger) {
+	public OrderListener(StockMovementAssigner assiger) {
 		this.assiger = assiger;
 	}
 	

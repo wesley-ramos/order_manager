@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -164,7 +163,7 @@ public class OrderServiceImplTest {
 		service.save(order);
 
 		verify(orderRepository).save(captor.capture());
-		verify(publisher, times(2)).publishEvent(any());
+		verify(publisher).publishEvent(any());
 		
 		assertTrue(captor.getValue().isCompleted());
 	}

@@ -9,5 +9,5 @@ public interface StockMovementRepository extends CrudRepository<StockMovementEnt
 	public List<StockMovementEntity> findAll();
 	
 	@Query(value = "SELECT sm.* FROM stock_movements sm WHERE sm.available = true and sm.product_id = ?1 ORDER BY sm.created_at ASC LIMIT 1", nativeQuery = true)
-	public StockMovementEntity findTheLastAvailable(Long productId);
+	public StockMovementEntity findTheLastIncompleteStockMovement(Long productId);
 }

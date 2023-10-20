@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import br.com.smartconsulting.ordermanager.core.common.exceptions.InvalidParameterException;
 import br.com.smartconsulting.ordermanager.core.common.exceptions.NotFoundException;
 import br.com.smartconsulting.ordermanager.core.order.entities.OrderEntity;
-import br.com.smartconsulting.ordermanager.core.order.events.OrderCompleted;
 import br.com.smartconsulting.ordermanager.core.order.events.OrderGeneratedEvent;
 import br.com.smartconsulting.ordermanager.core.order.repositories.OrderRepository;
 import br.com.smartconsulting.ordermanager.core.product.ProductRepository;
@@ -52,10 +51,6 @@ public class OrderServiceImpl implements OrderService {
     		.orElseThrow(() -> new InvalidParameterException(format("Product %d was not found", order.getProduct().getId())));
 		
 		orderRepository.save(order);
-		
-		if(order.isCompleted()) {
-			publisher.publishEvent(new OrderCompleted(this, order.getId()));
-		}
 		
 		publisher.publishEvent(new OrderGeneratedEvent(this, order.getId()));	
 	}
