@@ -13,10 +13,8 @@ This project is a simplified version of an order manager, its purpose is to demo
 - All entities (User, Order, Item, StockMovement) must have an endpoint to create, update, delete and list;
 - When an order is created, it should try to satisfy it with the current stock;
 - When a stock movement is created, the system should try to attribute it to an order that isn't complete;
-- When an order is complete, send a notification by email to the user that created it;
 - Trace the list of stock movements that were used to complete the order, and vice-versa;
 - Show current completion of each order;
-- Write a log file with: orders completed, stock movements, email sent and errors.
 - API should make by java 8 with Spring Boot + Spring JPA or Jave EE + Hibernate, PostgreSQL, GIT, log4j (or other);
 
 # How to execute the project?
@@ -29,3 +27,19 @@ Just access the api documentation at the URL below.
 ```shell
 http://localhost:8080/docs
 ```
+You can make requests there
+![API](/docs/api.png).
+
+# How to view stock movement assignments?
+Just view the application logs
+```shell
+docker logs webapp -f
+```
+![API](/docs/logs.png).
+
+## Points for improvements
+- Add pagination on endpoints that list records.
+- Add hyperlinks (HATEOAS).
+- Add validation to the delete endpoints (Do not allow the deletion of records that are being used in the Order or StockMovement).
+- Create service to remove assignments when an order or stock movement is deleted, ensuring information consistency.
+- Complete automated testing of the "OrderStockMovementAssigner" service.
