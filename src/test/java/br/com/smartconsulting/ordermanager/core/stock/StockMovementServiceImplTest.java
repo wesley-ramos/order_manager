@@ -2,6 +2,7 @@ package br.com.smartconsulting.ordermanager.core.stock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +18,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import br.com.smartconsulting.ordermanager.core.common.exceptions.NotFoundException;
 import br.com.smartconsulting.ordermanager.core.product.ProductEntity;
@@ -29,12 +31,15 @@ public class StockMovementServiceImplTest {
 	@Mock
 	private StockMovementRepository repository;
 	
+	@Mock
+	private ApplicationEventPublisher publisher;
+	
 	@Captor
 	private ArgumentCaptor<StockMovementEntity> captor;
 
 	@BeforeEach
 	public void init() {
-		this.service = new StockMovementServiceImpl(repository);
+		this.service = new StockMovementServiceImpl(repository, publisher);
 	}
 	
 	@Test
@@ -85,6 +90,7 @@ public class StockMovementServiceImplTest {
 		service.save(movement);
 
 		verify(repository).save(captor.capture());
+		verify(publisher).publishEvent(any());
 		
 		assertEquals(captor.getValue(), movement);
 	}
