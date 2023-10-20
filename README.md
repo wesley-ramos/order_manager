@@ -42,4 +42,3 @@ docker logs webapp -f
 - Add hyperlinks (HATEOAS).
 - Add validation to the delete endpoints (Do not allow the deletion of records that are being used in the Order or StockMovement).
 - Create service to remove assignments when an order or stock movement is deleted, ensuring information consistency.
-- Complete automated testing of the "OrderStockMovementAssigner" service.
