@@ -1,0 +1,33 @@
+<html>
+	<body>
+		<p>Hi ${userName},</p>
+		<p>Order number ${orderId} has been completed</p>
+		<table style="border-collapse: collapse;margin: 25px 0;font-size: 0.9em;font-family: sans-serif;box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);min-width: 400px;">
+		  <tr style="background-color: #009879;color: #ffffff;text-align: left;">
+		    <th>Product ID</th>
+		    <th>Product Name</th>
+		    <th>Quantity</th>
+		  </tr>
+		  <tr style="border-bottom: 1px solid #dddddd;font-weight: bold;">
+		    <td>${productId}</td>
+		    <td>${productName}</td>
+		    <td>${productQuantity}</td>
+		  </tr>
+		</table>
+		<p>To complete the order, the stock movements below were used:</p>
+		<table style="border-collapse: collapse;margin: 25px 0;font-size: 0.9em;font-family: sans-serif;box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);min-width: 400px;">
+		  <tr style="background-color: #009879;color: #ffffff;text-align: left;">
+		    <th>Stock Movement ID</th>
+		    <th>Total Amount</th>
+		    <th>Quantity Used</th>
+		  </tr>
+		  #foreach( $stockMovement in $stockMovements )
+			  <tr style="border-bottom: 1px solid #dddddd;font-weight: bold;">
+			    <td>${stockMovement.stockMovement.id}</td>
+			    <td>${stockMovement.stockMovement.quantity}</td>
+			    <td>${stockMovement.quantityUsed}</td>
+			  </tr>
+		  #end
+		</table>
+	</body>
+</html>
