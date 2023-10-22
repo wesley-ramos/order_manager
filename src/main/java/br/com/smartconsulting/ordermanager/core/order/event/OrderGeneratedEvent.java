@@ -1,4 +1,4 @@
-package br.com.smartconsulting.ordermanager.core.order.events;
+package br.com.smartconsulting.ordermanager.core.order.event;
 
 import org.springframework.context.ApplicationEvent;
 

@@ -28,10 +28,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderEntity;
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderStockMovementEntity;
-import br.com.smartconsulting.ordermanager.core.order.repositories.OrderRepository;
-import br.com.smartconsulting.ordermanager.core.order.repositories.OrderStockMovementRepository;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderEntity;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderStockMovementEntity;
+import br.com.smartconsulting.ordermanager.core.order.repository.OrderRepository;
+import br.com.smartconsulting.ordermanager.core.order.repository.OrderStockMovementRepository;
 import br.com.smartconsulting.ordermanager.core.product.ProductEntity;
 import br.com.smartconsulting.ordermanager.core.stock.StockMovementEntity;
 import br.com.smartconsulting.ordermanager.core.stock.StockMovementRepository;
@@ -86,11 +86,13 @@ public class StockMovementAssignerTest {
 		
 		assigner.assign();
 		
-		verify(orderRepository).save(orderCaptor.capture());
+		verify(orderRepository, times(3)).save(orderCaptor.capture());
 		verify(stockMovementRepository, times(3)).save(any());
 		verify(orderStockMovementRepository, times(3)).save(any());
 		
-		OrderEntity orderSaved = orderCaptor.getValue();
+		assertThat(orderCaptor.getAllValues(), hasSize(3));
+		
+		OrderEntity orderSaved = orderCaptor.getAllValues().get(orderCaptor.getAllValues().size() -1);
 		
 		assertThat(orderSaved.getStockMoviments(), hasSize(3));
 		

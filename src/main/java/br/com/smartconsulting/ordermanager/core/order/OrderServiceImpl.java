@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 
 import br.com.smartconsulting.ordermanager.core.common.exceptions.InvalidParameterException;
 import br.com.smartconsulting.ordermanager.core.common.exceptions.NotFoundException;
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderEntity;
-import br.com.smartconsulting.ordermanager.core.order.events.OrderGeneratedEvent;
-import br.com.smartconsulting.ordermanager.core.order.repositories.OrderRepository;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderEntity;
+import br.com.smartconsulting.ordermanager.core.order.event.OrderGeneratedEvent;
+import br.com.smartconsulting.ordermanager.core.order.repository.OrderRepository;
+import br.com.smartconsulting.ordermanager.core.product.ProductEntity;
 import br.com.smartconsulting.ordermanager.core.product.ProductRepository;
+import br.com.smartconsulting.ordermanager.core.user.UserEntity;
 import br.com.smartconsulting.ordermanager.core.user.UserRepository;
 
 @Service
@@ -44,11 +46,14 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Override
 	public void save(OrderEntity order) {
-		userRepository.findById(order.getUser().getId())
+		UserEntity user = userRepository.findById(order.getUser().getId())
         	.orElseThrow(() -> new InvalidParameterException(format("User %d was not found", order.getUser().getId())));
 		
-		productRepository.findById(order.getProduct().getId())
+		ProductEntity product = productRepository.findById(order.getProduct().getId())
     		.orElseThrow(() -> new InvalidParameterException(format("Product %d was not found", order.getProduct().getId())));
+		
+		order.setUser(user);
+		order.setProduct(product);
 		
 		orderRepository.save(order);
 		

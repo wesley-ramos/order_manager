@@ -25,10 +25,10 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import br.com.smartconsulting.ordermanager.core.common.exceptions.InvalidParameterException;
 import br.com.smartconsulting.ordermanager.core.common.exceptions.NotFoundException;
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderEntity;
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderStockMovementEntity;
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderStockMovementId;
-import br.com.smartconsulting.ordermanager.core.order.repositories.OrderRepository;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderEntity;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderStockMovementEntity;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderStockMovementId;
+import br.com.smartconsulting.ordermanager.core.order.repository.OrderRepository;
 import br.com.smartconsulting.ordermanager.core.product.ProductEntity;
 import br.com.smartconsulting.ordermanager.core.product.ProductRepository;
 import br.com.smartconsulting.ordermanager.core.user.UserEntity;
@@ -78,7 +78,7 @@ public class OrderServiceImplTest {
 	@Test
 	public void whenTheOrderExistsTheSystemShouldReturnTheOrder() {
 		
-		OrderEntity order = createEntity(1l, 1, 1, 3, new HashSet<OrderStockMovementEntity>());
+		OrderEntity order = createOrder(1l, 1, 1, 3, new HashSet<OrderStockMovementEntity>());
 			
 		when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
 
@@ -91,8 +91,8 @@ public class OrderServiceImplTest {
 	
 	@Test
 	public void whenRunningTheListItShouldReturnAllOrders() {
-		OrderEntity order1 = createEntity(1l, 1, 1, 3, new HashSet<OrderStockMovementEntity>());
-		OrderEntity order2 = createEntity(2l, 1, 1, 6, new HashSet<OrderStockMovementEntity>());
+		OrderEntity order1 = createOrder(1l, 1, 1, 3, new HashSet<OrderStockMovementEntity>());
+		OrderEntity order2 = createOrder(2l, 1, 1, 6, new HashSet<OrderStockMovementEntity>());
 		
 		List<OrderEntity> orders = new ArrayList<>();
 		orders.add(order1);
@@ -108,7 +108,7 @@ public class OrderServiceImplTest {
 	
 	@Test
 	public void whenCreatingAnOrderWithAnInvalidUserTheSystemShouldThrowAnException() {
-		OrderEntity order = createEntity(2l, 29, 1, 2, new HashSet<OrderStockMovementEntity>());
+		OrderEntity order = createOrder(2l, 29, 1, 2, new HashSet<OrderStockMovementEntity>());
 		
 		when(userRepository.findById(order.getUser().getId())).thenReturn(Optional.empty());
 		
@@ -121,7 +121,7 @@ public class OrderServiceImplTest {
 	
 	@Test
 	public void whenCreatingAnOrderWithAnInvalidProductTheSystemShouldThrowAnException() {
-		OrderEntity order = createEntity(2l, 29, 1, 2, new HashSet<OrderStockMovementEntity>());
+		OrderEntity order = createOrder(2l, 29, 1, 2, new HashSet<OrderStockMovementEntity>());
 		
 		when(userRepository.findById(order.getUser().getId())).thenReturn(Optional.of(order.getUser()));
 		when(productRepository.findById(order.getProduct().getId())).thenReturn(Optional.empty());
@@ -135,7 +135,7 @@ public class OrderServiceImplTest {
 	
 	@Test
 	public void whenTheOrderDoesNotHaveAllTheNecessaryMovementsTheSystemShouldSaveItIncomplete() {
-		OrderEntity order = createEntity(2l, 1, 1, 6, new HashSet<OrderStockMovementEntity>());
+		OrderEntity order = createOrder(2l, 1, 1, 6, new HashSet<OrderStockMovementEntity>());
 		
 		when(userRepository.findById(order.getUser().getId())).thenReturn(Optional.of(order.getUser()));
 		when(productRepository.findById(order.getProduct().getId())).thenReturn(Optional.of(order.getProduct()));
@@ -155,7 +155,7 @@ public class OrderServiceImplTest {
 		Set<OrderStockMovementEntity> moviments = new HashSet<OrderStockMovementEntity>();
 		moviments.add(movement);
 		
-		OrderEntity order = createEntity(2l, 1, 1, 6, moviments);
+		OrderEntity order = createOrder(2l, 1, 1, 6, moviments);
 		
 		when(userRepository.findById(order.getUser().getId())).thenReturn(Optional.of(order.getUser()));
 		when(productRepository.findById(order.getProduct().getId())).thenReturn(Optional.of(order.getProduct()));
@@ -181,7 +181,7 @@ public class OrderServiceImplTest {
 	
 	@Test
 	public void whenTheOrderExistsTheSystemShouldDeleteIt() {
-		OrderEntity order = createEntity(2l, 1, 1, 6, new HashSet<OrderStockMovementEntity>());
+		OrderEntity order = createOrder(2l, 1, 1, 6, new HashSet<OrderStockMovementEntity>());
 		
 		when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
 		
@@ -192,7 +192,7 @@ public class OrderServiceImplTest {
 		assertEquals(captor.getValue(), order);
 	}
 
-	private OrderEntity createEntity(long id, long productId, long userId, long quantity, Set<OrderStockMovementEntity> moviments) {
+	private OrderEntity createOrder(long id, long productId, long userId, long quantity, Set<OrderStockMovementEntity> moviments) {
 		ProductEntity product = new ProductEntity();
 		product.setId(productId);
 		

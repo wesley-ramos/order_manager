@@ -8,19 +8,19 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderEntity;
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderStockMovementEntity;
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderStockMovementId;
-import br.com.smartconsulting.ordermanager.core.order.events.OrderCompleted;
-import br.com.smartconsulting.ordermanager.core.order.repositories.OrderRepository;
-import br.com.smartconsulting.ordermanager.core.order.repositories.OrderStockMovementRepository;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderEntity;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderStockMovementEntity;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderStockMovementId;
+import br.com.smartconsulting.ordermanager.core.order.event.OrderCompleted;
+import br.com.smartconsulting.ordermanager.core.order.repository.OrderRepository;
+import br.com.smartconsulting.ordermanager.core.order.repository.OrderStockMovementRepository;
 import br.com.smartconsulting.ordermanager.core.stock.StockMovementEntity;
 import br.com.smartconsulting.ordermanager.core.stock.StockMovementRepository;
 
 @Component
 public class StockMovementAssigner {
 	
-	private Logger logger = LoggerFactory.getLogger(OrderListener.class);
+	private Logger logger = LoggerFactory.getLogger(OrderHandler.class);
 	
 	private OrderRepository orderRepository;
 	private StockMovementRepository stockMovementRepository;
@@ -80,12 +80,12 @@ public class StockMovementAssigner {
 				
 				stockMovement.addOrder(orderMovement);
 				stockMovementRepository.save(stockMovement);
+				
 				order.addMoviment(orderMovement);
-							
+				orderRepository.save(order);
+				
 				logger.info("Assigning stock movement {} to order {} with the quantity of {} items", stockMovement.getId(), order.getId(), quantityForAssign);
 			}
-			
-			orderRepository.save(order);
 			
 			if(order.isCompleted()) {
 				publisher.publishEvent(new OrderCompleted(this, order.getId(), order.getUser().getId()));

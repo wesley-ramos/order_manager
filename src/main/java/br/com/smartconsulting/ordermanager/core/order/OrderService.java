@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderEntity;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderEntity;
 
 public interface OrderService {
 	

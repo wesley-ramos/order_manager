@@ -1,4 +1,4 @@
-package br.com.smartconsulting.ordermanager.core.order.entities;
+package br.com.smartconsulting.ordermanager.core.order.entity;
 
 import java.io.Serializable;
 import java.util.Objects;

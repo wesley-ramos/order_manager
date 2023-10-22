@@ -1,4 +1,4 @@
-package br.com.smartconsulting.ordermanager.core.order.entities;
+package br.com.smartconsulting.ordermanager.core.order.entity;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
