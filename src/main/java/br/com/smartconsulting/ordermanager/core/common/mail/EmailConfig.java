@@ -1,10 +1,10 @@
-package br.com.smartconsulting.ordermanager.core.order.notifier;
+package br.com.smartconsulting.ordermanager.core.common.mail;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SMTPConfiguration {
+public class EmailConfig {
 	
 	private boolean configured;
 	private String host;
@@ -12,7 +12,7 @@ public class SMTPConfiguration {
 	private String email;
 	private String password;
 	
-	public SMTPConfiguration (
+	public EmailConfig (
 			@Value("${mail.smtp.enabled}") boolean configured,
 			@Value("${mail.smtp.host:#{null}}") String host,
 			@Value("${mail.smtp.port:#{null}}") String port,
