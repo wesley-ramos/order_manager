@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,7 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderStockMovementEntity;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderStockMovementEntity;
 import br.com.smartconsulting.ordermanager.core.product.ProductEntity;
 
 @Entity
@@ -27,7 +28,7 @@ public class StockMovementEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
 	private ProductEntity product;
 	
@@ -93,7 +94,7 @@ public class StockMovementEntity {
 			.map(moviment -> moviment.getQuantityUsed())
 			.reduce(0l, Long::sum);
 		
-		if (totalAmountUsed < quantity) {
+		if (quantity > totalAmountUsed) {
 			available = true;
 			return;
 		}

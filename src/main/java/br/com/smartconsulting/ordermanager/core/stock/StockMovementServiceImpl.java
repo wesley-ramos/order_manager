@@ -9,34 +9,42 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import br.com.smartconsulting.ordermanager.core.common.exceptions.NotFoundException;
+import br.com.smartconsulting.ordermanager.core.product.ProductEntity;
+import br.com.smartconsulting.ordermanager.core.product.ProductRepository;
 import br.com.smartconsulting.ordermanager.core.stock.events.StockMovedEvent;
 
 @Service
 public class StockMovementServiceImpl implements StockMovementService {
 	
-	private StockMovementRepository repository;
+	private ProductRepository productRepository;
+	private StockMovementRepository stockMovementRepository;
 	private ApplicationEventPublisher publisher;
 
 	@Autowired
-	public StockMovementServiceImpl(StockMovementRepository repository, ApplicationEventPublisher publisher) {
-		this.repository = repository;
+	public StockMovementServiceImpl(StockMovementRepository repository, ProductRepository productRepository, ApplicationEventPublisher publisher) {
+		this.stockMovementRepository = repository;
+		this.productRepository = productRepository;
 		this.publisher = publisher;
 	}
 	
 	@Override
 	public StockMovementEntity findById(Long id) {
-		return repository.findById(id)
+		return stockMovementRepository.findById(id)
             .orElseThrow(() -> new NotFoundException(format("StockMovement %d was not found", id)));
 	}
 
 	@Override
 	public List<StockMovementEntity> findAll() {
-		return repository.findAll();
+		return stockMovementRepository.findAll();
 	}
 
 	@Override
 	public void save(StockMovementEntity movement) {
-		repository.save(movement);
+		ProductEntity product = productRepository.findById(movement.getProduct().getId())
+				.orElseThrow(() -> new NotFoundException(format("Product %d was not found", movement.getProduct().getId())));
+		
+		movement.setProduct(product);
+		stockMovementRepository.save(movement);
 		
 		StockMovedEvent event = new StockMovedEvent(
 			this,
@@ -51,6 +59,6 @@ public class StockMovementServiceImpl implements StockMovementService {
 	@Override
 	public void delete(Long id) {
 		StockMovementEntity movement = this.findById(id);
-		repository.delete(movement);
+		stockMovementRepository.delete(movement);
 	}
 }

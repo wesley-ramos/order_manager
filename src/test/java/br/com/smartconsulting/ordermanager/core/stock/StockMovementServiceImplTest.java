@@ -22,14 +22,18 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import br.com.smartconsulting.ordermanager.core.common.exceptions.NotFoundException;
 import br.com.smartconsulting.ordermanager.core.product.ProductEntity;
+import br.com.smartconsulting.ordermanager.core.product.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class StockMovementServiceImplTest {
 	
 	private  StockMovementService service;
-
+	
 	@Mock
-	private StockMovementRepository repository;
+	private ProductRepository productRepository;
+	
+	@Mock
+	private StockMovementRepository stockMovementRepository;
 	
 	@Mock
 	private ApplicationEventPublisher publisher;
@@ -39,14 +43,14 @@ public class StockMovementServiceImplTest {
 
 	@BeforeEach
 	public void init() {
-		this.service = new StockMovementServiceImpl(repository, publisher);
+		this.service = new StockMovementServiceImpl(stockMovementRepository, productRepository, publisher);
 	}
 	
 	@Test
 	public void whenTryingToGetAMovementThatDoesNotExistTheSystemShouldThrowAnException() {
 		Long id = 1l;
 
-		when(repository.findById(id)).thenReturn(Optional.empty());
+		when(stockMovementRepository.findById(id)).thenReturn(Optional.empty());
 
 		assertThrows(NotFoundException.class, () -> {
 			service.findById(id);
@@ -55,41 +59,44 @@ public class StockMovementServiceImplTest {
 	
 	@Test
 	public void whenTheMovementExistsTheSystemShouldReturnTheMovement() {
-		StockMovementEntity movement = createEntity(1l, 1l, 3);
+		StockMovementEntity movement = createStockMovement(1l, 1l, 3);
 			
-		when(repository.findById(movement.getId())).thenReturn(Optional.of(movement));
+		when(stockMovementRepository.findById(movement.getId())).thenReturn(Optional.of(movement));
 
 		StockMovementEntity response = service.findById(movement.getId());
 
-		verify(repository).findById(movement.getId());
+		verify(stockMovementRepository).findById(movement.getId());
 
 		assertEquals(movement, response);
 	}
 	
 	@Test
 	public void whenRunningTheListItShouldReturnAllMovements() {
-		StockMovementEntity cocaCola = createEntity(1l, 1l, 3);
-		StockMovementEntity fanta = createEntity(2l, 2l, 5);
+		StockMovementEntity cocaCola = createStockMovement(1l, 1l, 3);
+		StockMovementEntity fanta = createStockMovement(2l, 2l, 5);
 		
 		List<StockMovementEntity> movements = new ArrayList<>();
 		movements.add(cocaCola);
 		movements.add(fanta);
 		
-		when(repository.findAll()).thenReturn(movements);
+		when(stockMovementRepository.findAll()).thenReturn(movements);
 		
 		List<StockMovementEntity> response = service.findAll();
-		verify(repository).findAll();
+		verify(stockMovementRepository).findAll();
 		
 		assertEquals(movements, response);
 	}
 	
 	@Test
 	public void whenTheMovementIsValidTheSystemShouldSaveIt() {
-		StockMovementEntity movement = createEntity(1l, 1l, 3);
+		ProductEntity product = createProduct(1, "Coca cola 2L");
+		StockMovementEntity movement = createStockMovement(1l, product.getId(), 3);
+		
+		when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 		
 		service.save(movement);
 
-		verify(repository).save(captor.capture());
+		verify(stockMovementRepository).save(captor.capture());
 		verify(publisher).publishEvent(any());
 		
 		assertEquals(captor.getValue(), movement);
@@ -99,7 +106,7 @@ public class StockMovementServiceImplTest {
 	public void whenTryingToDeleteAMovementThatDoesNotExistTheSystemShouldThrowAnException() {
 		Long id = 1l;
 
-		when(repository.findById(id)).thenReturn(Optional.empty());
+		when(stockMovementRepository.findById(id)).thenReturn(Optional.empty());
 
 		assertThrows(NotFoundException.class, () -> {
 			service.delete(id);
@@ -108,18 +115,25 @@ public class StockMovementServiceImplTest {
 	
 	@Test
 	public void whenTheMovementExistsTheSystemShouldDeleteIt() {
-		StockMovementEntity movement = createEntity(1l, 1l, 3);
+		StockMovementEntity movement = createStockMovement(1l, 1l, 3);
 		
-		when(repository.findById(movement.getId())).thenReturn(Optional.of(movement));
+		when(stockMovementRepository.findById(movement.getId())).thenReturn(Optional.of(movement));
 		
 		service.delete(movement.getId());
 
-		verify(repository).delete(captor.capture());
+		verify(stockMovementRepository).delete(captor.capture());
 		
 		assertEquals(captor.getValue(), movement);
 	}
+	
+	private ProductEntity createProduct(long id, String name) {
+		ProductEntity product = new  ProductEntity();
+		product.setId(id);
+		product.setName(name);
+		return product;
+	}
 
-	private StockMovementEntity createEntity(long id, long productId, long quantity) {
+	private StockMovementEntity createStockMovement(long id, long productId, long quantity) {
 		ProductEntity product = new ProductEntity();
 		product.setId(productId);
 		
