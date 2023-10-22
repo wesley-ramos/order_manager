@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import br.com.smartconsulting.ordermanager.core.order.entities.OrderEntity;
+import br.com.smartconsulting.ordermanager.core.order.entity.OrderEntity;
 import br.com.smartconsulting.ordermanager.core.product.ProductEntity;
 import br.com.smartconsulting.ordermanager.core.user.UserEntity;
 
