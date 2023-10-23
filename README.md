@@ -27,7 +27,7 @@ Just access the api documentation at the URL below.
 ```shell
 http://localhost:8080/docs
 ```
-You can make requests there
+You can use the documentation page to make requests and test the application.
 ![API](/docs/api.png).
 
 # How to view stock movement assignments?
