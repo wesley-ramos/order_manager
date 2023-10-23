@@ -12,4 +12,10 @@ public interface OrderRepository extends CrudRepository<OrderEntity, Long> {
 	
 	@Query(value = "SELECT o FROM OrderEntity o WHERE o.completed = false ORDER BY o.createdAt asc")
 	public List<OrderEntity> findAllIncompleteOrders();
+	
+	@Query(value = "SELECT count(id) FROM orders WHERE user_id = ?1", nativeQuery = true)
+	Long countByUserId(Long userId);
+	
+	@Query(value = "SELECT count(id) FROM orders WHERE product_id = ?1", nativeQuery = true)
+	Long countByProductId(Long productId);
 }
