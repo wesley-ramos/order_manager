@@ -7,16 +7,16 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.smartconsulting.ordermanager.core.order.entity.OrderEntity;
 
 public interface OrderService {
-	
+
 	@Transactional
-    public OrderEntity findById(Long id);
-	
+	public OrderEntity findById(Long id);
+
 	@Transactional
-    public List<OrderEntity> findAll();
-	
+	public List<OrderEntity> findAll();
+
 	@Transactional
-    public void save(OrderEntity order);
-	
+	public void save(OrderEntity order);
+
 	@Transactional
-    public void delete(Long id);
+	public void delete(Long id);
 }

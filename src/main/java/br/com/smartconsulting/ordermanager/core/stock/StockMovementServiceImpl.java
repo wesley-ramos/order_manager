@@ -15,22 +15,25 @@ import br.com.smartconsulting.ordermanager.core.stock.events.StockMovedEvent;
 
 @Service
 public class StockMovementServiceImpl implements StockMovementService {
-	
+
 	private ProductRepository productRepository;
 	private StockMovementRepository stockMovementRepository;
 	private ApplicationEventPublisher publisher;
 
 	@Autowired
-	public StockMovementServiceImpl(StockMovementRepository repository, ProductRepository productRepository, ApplicationEventPublisher publisher) {
+	public StockMovementServiceImpl(
+			StockMovementRepository repository, 
+			ProductRepository productRepository,
+			ApplicationEventPublisher publisher) {
 		this.stockMovementRepository = repository;
 		this.productRepository = productRepository;
 		this.publisher = publisher;
 	}
-	
+
 	@Override
 	public StockMovementEntity findById(Long id) {
 		return stockMovementRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException(format("StockMovement %d was not found", id)));
+			.orElseThrow(() -> new NotFoundException(format("StockMovement %d was not found", id)));
 	}
 
 	@Override
@@ -41,18 +44,18 @@ public class StockMovementServiceImpl implements StockMovementService {
 	@Override
 	public void save(StockMovementEntity movement) {
 		ProductEntity product = productRepository.findById(movement.getProduct().getId())
-				.orElseThrow(() -> new NotFoundException(format("Product %d was not found", movement.getProduct().getId())));
-		
+			.orElseThrow(() -> new NotFoundException(format("Product %d was not found", movement.getProduct().getId())));
+
 		movement.setProduct(product);
 		stockMovementRepository.save(movement);
-		
+
 		StockMovedEvent event = new StockMovedEvent(
-			this,
-			movement.getId(),
+			this, 
+			movement.getId(), 
 			movement.getProduct().getId(),
 			movement.getQuantity()
 		);
-		
+
 		publisher.publishEvent(event);
 	}
 

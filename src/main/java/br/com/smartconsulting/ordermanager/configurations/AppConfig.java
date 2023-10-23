@@ -18,13 +18,13 @@ public class AppConfig {
 		eventMulticaster.setTaskExecutor(new SimpleAsyncTaskExecutor());
 		return eventMulticaster;
 	}
-	
+
 	@Bean
 	public VelocityEngine velocity() {
 		VelocityEngine velocityEngine = new VelocityEngine();
 		velocityEngine.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
 		velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "class,file");
-        velocityEngine.init();
-        return velocityEngine;
+		velocityEngine.init();
+		return velocityEngine;
 	}
 }

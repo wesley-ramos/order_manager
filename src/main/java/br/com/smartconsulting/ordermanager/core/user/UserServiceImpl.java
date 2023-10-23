@@ -13,12 +13,14 @@ import br.com.smartconsulting.ordermanager.core.order.repository.OrderRepository
 
 @Service
 public class UserServiceImpl implements UserService {
-	
+
 	private UserRepository userRepository;
 	private OrderRepository orderRepository;
-	
+
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository, OrderRepository orderRepository) {
+	public UserServiceImpl(
+			UserRepository userRepository, 
+			OrderRepository orderRepository) {
 		this.userRepository = userRepository;
 		this.orderRepository = orderRepository;
 	}
@@ -26,7 +28,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserEntity findById(Long id) {
 		return userRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException(format("User %d was not found", id)));
+			.orElseThrow(() -> new NotFoundException(format("User %d was not found", id)));
 	}
 
 	@Override
@@ -38,17 +40,17 @@ public class UserServiceImpl implements UserService {
 	public void save(UserEntity user) {
 		userRepository.save(user);
 	}
-	
+
 	@Override
 	public void delete(Long id) {
 		UserEntity user = this.findById(id);
-		
+
 		Long orders = orderRepository.countByUserId(user.getId());
-		
+
 		if (orders > 0) {
 			throw new InvalidOperationException("It was not possible to delete this user, as there are orders linked to this user");
 		}
-		
+
 		userRepository.delete(user);
 	}
 }

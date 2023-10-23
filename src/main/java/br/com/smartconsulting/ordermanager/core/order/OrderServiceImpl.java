@@ -24,40 +24,44 @@ public class OrderServiceImpl implements OrderService {
 	private ProductRepository productRepository;
 	private OrderRepository orderRepository;
 	private ApplicationEventPublisher publisher;
-	
+
 	@Autowired
-	public OrderServiceImpl(UserRepository userRepository, ProductRepository productRepository, OrderRepository orderRepository, ApplicationEventPublisher publisher) {
+	public OrderServiceImpl(
+			UserRepository userRepository, 
+			ProductRepository productRepository,
+			OrderRepository orderRepository, 
+			ApplicationEventPublisher publisher) {
 		this.userRepository = userRepository;
 		this.productRepository = productRepository;
 		this.orderRepository = orderRepository;
 		this.publisher = publisher;
 	}
-	
+
 	@Override
 	public OrderEntity findById(Long id) {
 		return orderRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException(format("Order %d was not found", id)));
+			.orElseThrow(() -> new NotFoundException(format("Order %d was not found", id)));
 	}
 
 	@Override
 	public List<OrderEntity> findAll() {
 		return orderRepository.findAll();
 	}
-	
+
 	@Override
 	public void save(OrderEntity order) {
 		UserEntity user = userRepository.findById(order.getUser().getId())
-        	.orElseThrow(() -> new InvalidParameterException(format("User %d was not found", order.getUser().getId())));
-		
+			.orElseThrow(() -> new InvalidParameterException(format("User %d was not found", order.getUser().getId())));
+
 		ProductEntity product = productRepository.findById(order.getProduct().getId())
-    		.orElseThrow(() -> new InvalidParameterException(format("Product %d was not found", order.getProduct().getId())));
-		
+			.orElseThrow(() -> new InvalidParameterException(format("Product %d was not found", order.getProduct().getId())));
+
 		order.setUser(user);
 		order.setProduct(product);
-		
+
 		orderRepository.save(order);
-		
-		publisher.publishEvent(new OrderGeneratedEvent(this, order.getId()));	
+
+		publisher.publishEvent(new OrderGeneratedEvent(this, order.getId()));
 	}
 
 	@Override

@@ -31,23 +31,23 @@ public class GlobalHandlerAdvice {
 	public ErrorMessage invalidOperation(InvalidOperationException exception) {
 		return new ErrorMessage(exception.getMessage());
 	}
-	
+
 	@ExceptionHandler(value = { InvalidParameterException.class })
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public ErrorMessage invalidParameter(InvalidParameterException exception) {
 		return new ErrorMessage(exception.getMessage());
 	}
-	
+
 	@ExceptionHandler(value = { MethodArgumentNotValidException.class })
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public ErrorMessage methodArgumentNotValid(MethodArgumentNotValidException ex) {
-		 List<String> errors = ex.getBindingResult().getFieldErrors()
-            .stream()
-            .map(FieldError::getDefaultMessage)
-            .collect(Collectors.toList());
-		 
+		List<String> errors = ex.getBindingResult().getFieldErrors()
+			.stream()
+			.map(FieldError::getDefaultMessage)
+			.collect(Collectors.toList());
+
 		return new ErrorMessage(errors);
 	}
 }
