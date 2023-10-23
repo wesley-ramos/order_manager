@@ -17,7 +17,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import br.com.smartconsulting.ordermanager.core.common.exceptions.InvalidOperationException;
 import br.com.smartconsulting.ordermanager.core.common.exceptions.NotFoundException;
+import br.com.smartconsulting.ordermanager.core.order.repository.OrderRepository;
+import br.com.smartconsulting.ordermanager.core.stock.StockMovementRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductServiceImplTest {
@@ -25,21 +28,31 @@ public class ProductServiceImplTest {
 	private  ProductService service;
 
 	@Mock
-	private ProductRepository repository;
+	private ProductRepository productRepository;
+	
+	@Mock
+	private OrderRepository orderRepository;
+	
+	@Mock
+	private StockMovementRepository stockMovementRepository;
 	
 	@Captor
 	private ArgumentCaptor<ProductEntity> captor;
 
 	@BeforeEach
 	public void init() {
-		this.service = new ProductServiceImpl(repository);
+		this.service = new ProductServiceImpl(
+			productRepository, 
+			orderRepository, 
+			stockMovementRepository
+		);
 	}
 	
 	@Test
 	public void whenTryingToGetAProductThatDoesNotExistTheSystemShouldThrowAnException() {
 		Long id = 1l;
 
-		when(repository.findById(id)).thenReturn(Optional.empty());
+		when(productRepository.findById(id)).thenReturn(Optional.empty());
 
 		assertThrows(NotFoundException.class, () -> {
 			service.findById(id);
@@ -51,11 +64,11 @@ public class ProductServiceImplTest {
 		
 		ProductEntity product = createEntity(1l, "Coca cola 2L");
 			
-		when(repository.findById(product.getId())).thenReturn(Optional.of(product));
+		when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 
 		ProductEntity response = service.findById(product.getId());
 
-		verify(repository).findById(product.getId());
+		verify(productRepository).findById(product.getId());
 
 		assertEquals(product, response);
 	}
@@ -69,10 +82,10 @@ public class ProductServiceImplTest {
 		products.add(cocaCola);
 		products.add(fanta);
 		
-		when(repository.findAll()).thenReturn(products);
+		when(productRepository.findAll()).thenReturn(products);
 		
 		List<ProductEntity> response = service.findAll();
-		verify(repository).findAll();
+		verify(productRepository).findAll();
 		
 		assertEquals(products, response);
 	}
@@ -83,7 +96,7 @@ public class ProductServiceImplTest {
 		
 		service.save(product);
 
-		verify(repository).save(captor.capture());
+		verify(productRepository).save(captor.capture());
 		
 		assertEquals(captor.getValue(), product);
 	}
@@ -92,7 +105,7 @@ public class ProductServiceImplTest {
 	public void whenTryingToDeleteAProductThatDoesNotExistTheSystemShouldThrowAnException() {
 		Long id = 1l;
 
-		when(repository.findById(id)).thenReturn(Optional.empty());
+		when(productRepository.findById(id)).thenReturn(Optional.empty());
 
 		assertThrows(NotFoundException.class, () -> {
 			service.delete(id);
@@ -100,14 +113,43 @@ public class ProductServiceImplTest {
 	}
 	
 	@Test
-	public void whenTheProductExistsTheSystemShouldDeleteIt() {
-		ProductEntity product = createEntity(1l, "Wesley Ramos");
+	public void whenTryingToDeleteAProductThatHasOrdersTheSystemShouldThrowAnException() {
+		ProductEntity product = createEntity(2l, "Coca cola 2L");
+
+		when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
+		when(orderRepository.countByProductId(product.getId())).thenReturn(2l);
+
+		Exception exception = assertThrows(InvalidOperationException.class, () -> {
+			service.delete(product.getId());
+		});
 		
-		when(repository.findById(product.getId())).thenReturn(Optional.of(product));
+		assertEquals("It was not possible to delete this product, as there are orders linked to this product", exception.getMessage());
+	}
+	
+	@Test
+	public void whenTryingToDeleteAProductThatHasStockMovementsTheSystemShouldThrowAnException() {
+		ProductEntity product = createEntity(3l, "Coca cola 1L");
+
+		when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
+		when(orderRepository.countByProductId(product.getId())).thenReturn(0l);
+		when(stockMovementRepository.countByProductId(product.getId())).thenReturn(3l);
+
+		Exception exception = assertThrows(InvalidOperationException.class, () -> {
+			service.delete(product.getId());
+		});
+		
+		assertEquals("It was not possible to delete this product, as there are stock movements linked to this product", exception.getMessage());
+	}
+	
+	@Test
+	public void whenTheProductExistsTheSystemShouldDeleteIt() {
+		ProductEntity product = createEntity(1l, "Coca cola 350ml");
+		
+		when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 		
 		service.delete(product.getId());
 
-		verify(repository).delete(captor.capture());
+		verify(productRepository).delete(captor.capture());
 		
 		assertEquals(captor.getValue(), product);
 	}
