@@ -31,14 +31,17 @@ You can make requests there
 ![API](/docs/api.png).
 
 # How to view stock movement assignments?
-Just view the application logs
+1. You can view what the application is running using the logs
 ```shell
 docker logs webapp -f
 ```
 ![API](/docs/logs.png).
 
+2. You can wait for the application to complete the order and view the summary in your email
+![API](/docs/email.png).
+
 ## Points for improvements
 - Add pagination on endpoints that list records.
+- Add filters on record listing endpoints
 - Add hyperlinks (HATEOAS).
-- Add validation to the delete endpoints (Do not allow the deletion of records that are being used in the Order or StockMovement).
 - Create service to remove assignments when an order or stock movement is deleted, ensuring information consistency.
