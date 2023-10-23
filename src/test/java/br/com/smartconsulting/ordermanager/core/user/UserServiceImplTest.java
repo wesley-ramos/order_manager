@@ -17,7 +17,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import br.com.smartconsulting.ordermanager.core.common.exceptions.InvalidOperationException;
 import br.com.smartconsulting.ordermanager.core.common.exceptions.NotFoundException;
+import br.com.smartconsulting.ordermanager.core.order.repository.OrderRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
@@ -25,21 +27,24 @@ public class UserServiceImplTest {
 	private  UserService service;
 
 	@Mock
-	private UserRepository repository;
+	private UserRepository userRepository;
+	
+	@Mock
+	private OrderRepository orderRepository;
 	
 	@Captor
 	private ArgumentCaptor<UserEntity> captor;
 
 	@BeforeEach
 	public void init() {
-		this.service = new UserServiceImpl(repository);
+		this.service = new UserServiceImpl(userRepository, orderRepository);
 	}
 	
 	@Test
 	public void whenTryingToGetAUserThatDoesNotExistTheSystemShouldThrowAnException() {
 		Long id = 1l;
 
-		when(repository.findById(id)).thenReturn(Optional.empty());
+		when(userRepository.findById(id)).thenReturn(Optional.empty());
 
 		assertThrows(NotFoundException.class, () -> {
 			service.findById(id);
@@ -51,11 +56,11 @@ public class UserServiceImplTest {
 		
 		UserEntity user = createUserEntity(1l, "Wesley Ramos", "wesley.ramos@gmail.com");
 			
-		when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
 		UserEntity response = service.findById(user.getId());
 
-		verify(repository).findById(user.getId());
+		verify(userRepository).findById(user.getId());
 
 		assertEquals(user, response);
 	}
@@ -69,10 +74,10 @@ public class UserServiceImplTest {
 		users.add(wesley);
 		users.add(werik);
 		
-		when(repository.findAll()).thenReturn(users);
+		when(userRepository.findAll()).thenReturn(users);
 		
 		List<UserEntity> response = service.findAll();
-		verify(repository).findAll();
+		verify(userRepository).findAll();
 		
 		assertEquals(users, response);
 	}
@@ -83,7 +88,7 @@ public class UserServiceImplTest {
 		
 		service.save(user);
 
-		verify(repository).save(captor.capture());
+		verify(userRepository).save(captor.capture());
 		
 		assertEquals(captor.getValue(), user);
 	}
@@ -92,7 +97,7 @@ public class UserServiceImplTest {
 	public void whenTryingToDeleteAUserThatDoesNotExistTheSystemShouldThrowAnException() {
 		Long id = 1l;
 
-		when(repository.findById(id)).thenReturn(Optional.empty());
+		when(userRepository.findById(id)).thenReturn(Optional.empty());
 
 		assertThrows(NotFoundException.class, () -> {
 			service.delete(id);
@@ -100,14 +105,26 @@ public class UserServiceImplTest {
 	}
 	
 	@Test
+	public void whenTryingToDeleteAUserThatHasOrdersTheSystemShouldThrowAnException() {
+		UserEntity user = createUserEntity(1l, "Wesley Ramos", "wesley.ramos@gmail.com");
+
+		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+		when(orderRepository.countByUserId(user.getId())).thenReturn(2l);
+
+		assertThrows(InvalidOperationException.class, () -> {
+			service.delete(user.getId());
+		});
+	}
+	
+	@Test
 	public void whenTheUserExistsTheSystemShouldDeleteIt() {
 		UserEntity user = createUserEntity(1l, "Wesley Ramos", "wesley.ramos@gmail.com");
 		
-		when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+		when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 		
 		service.delete(user.getId());
 
-		verify(repository).delete(captor.capture());
+		verify(userRepository).delete(captor.capture());
 		
 		assertEquals(captor.getValue(), user);
 	}
