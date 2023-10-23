@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,8 +39,7 @@ public class StockMovementEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 	
-	@OneToMany
-	@JoinColumn(name = "stock_movement_id")
+	@OneToMany(mappedBy = "stockMovement", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<OrderStockMovementEntity> orders;
 	
 	private boolean available;

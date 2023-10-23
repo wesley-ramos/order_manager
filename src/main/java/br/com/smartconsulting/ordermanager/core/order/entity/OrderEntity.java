@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,8 +40,7 @@ public class OrderEntity {
 	private Long quantity;
 	private boolean completed;
 	
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_id")
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<OrderStockMovementEntity> stockMoviments;
 	
 	@Column(name = "created_at")
