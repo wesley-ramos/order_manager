@@ -20,7 +20,7 @@ import br.com.smartconsulting.ordermanager.core.order.OrderService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@Tag(name = "Orders", description = "Module for order management")
+@Tag(name = "Orders", description = "Set of APIs that allows you to create, delete and get orders")
 @RequestMapping(value = "/v1/orders")
 public class OrderController {
 	

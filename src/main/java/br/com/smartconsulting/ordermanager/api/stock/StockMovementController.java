@@ -20,7 +20,7 @@ import br.com.smartconsulting.ordermanager.core.stock.StockMovementService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@Tag(name = "Stock Movement", description = "Module for stock movements")
+@Tag(name = "Stock Movement", description = "Set of APIs that allows you to create, delete and get stock movements")
 @RequestMapping(value = "/v1/stock-movements")
 public class StockMovementController {
 	

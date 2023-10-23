@@ -17,7 +17,7 @@ public class OpenAPIConfig {
 	public OpenAPI api(ServletContext servletContext) {
 		Info info = new Info()
 			.title("Order Manager")
-			.description("API for order management")
+			.description("This project is a simplified version of an order manager")
 			.version("1.0.0")
 			.license(new License().name("Apache 2.0").url("http://springdoc.org"));
         

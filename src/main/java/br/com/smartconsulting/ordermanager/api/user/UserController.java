@@ -20,7 +20,7 @@ import br.com.smartconsulting.ordermanager.core.user.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@Tag(name = "Users", description = "Module for user management")
+@Tag(name = "Users", description = "Set of APIs that allows you to create, delete and get users")
 @RequestMapping(value = "/v1/users")
 public class UserController {
 	
